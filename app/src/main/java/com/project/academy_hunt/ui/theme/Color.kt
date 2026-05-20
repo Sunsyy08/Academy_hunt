@@ -1,4 +1,4 @@
-package com.academyhunt.ui.theme
+package com.project.academy_hunt.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
