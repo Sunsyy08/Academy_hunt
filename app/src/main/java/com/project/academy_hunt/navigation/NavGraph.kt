@@ -12,6 +12,7 @@ import com.project.academy_hunt.ui.auth.LoginScreen
 import com.project.academy_hunt.ui.auth.RegisterScreen
 import com.project.academy_hunt.ui.onboarding.OnboardingScreen
 import com.project.academy_hunt.ui.splash.SplashScreen
+import com.project.academy_hunt.ui.student.StudentHomeScreen
 import com.project.academy_hunt.viewmodel.LoginViewModel
 import com.project.academy_hunt.viewmodel.OnboardingViewModel
 import com.project.academy_hunt.viewmodel.RegisterViewModel
@@ -87,6 +88,13 @@ fun NavGraph(
                         popUpTo(Routes.ONBOARDING) { inclusive = true }
                     }
                 }
+            )
+        }
+
+        composable(Routes.STUDENT_HOME) {
+            StudentHomeScreen(
+                userName       = "홍길동",  // 추후 TokenDataStore에서 읽어오기
+                conditionCount = 2
             )
         }
     }
