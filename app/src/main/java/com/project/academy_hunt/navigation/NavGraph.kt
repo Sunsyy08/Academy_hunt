@@ -12,19 +12,33 @@ import com.project.academy_hunt.ui.auth.LoginScreen
 import com.project.academy_hunt.ui.auth.RegisterScreen
 import com.project.academy_hunt.ui.onboarding.OnboardingScreen
 import com.project.academy_hunt.ui.splash.SplashScreen
+import com.project.academy_hunt.ui.student.StudentAcademyProfileScreen
+import com.project.academy_hunt.ui.student.StudentChatListScreen
+import com.project.academy_hunt.ui.student.StudentChatRoomScreen
+import com.project.academy_hunt.ui.student.StudentConditionScreen
 import com.project.academy_hunt.ui.student.StudentHomeScreen
+import com.project.academy_hunt.ui.student.StudentMyPageScreen
+import com.project.academy_hunt.ui.student.StudentProposalDetailScreen
+import com.project.academy_hunt.ui.student.StudentProposalListScreen
 import com.project.academy_hunt.viewmodel.LoginViewModel
 import com.project.academy_hunt.viewmodel.OnboardingViewModel
 import com.project.academy_hunt.viewmodel.RegisterViewModel
 import com.project.academy_hunt.viewmodel.ViewModelFactory
 
 object Routes {
-    const val SPLASH       = "splash"
-    const val ONBOARDING   = "onboarding"
-    const val LOGIN        = "login"
-    const val REGISTER     = "register"
-    const val STUDENT_HOME = "student_home"
-    const val ACADEMY_HOME = "academy_home"
+    const val SPLASH                   = "splash"
+    const val ONBOARDING               = "onboarding"
+    const val LOGIN                    = "login"
+    const val REGISTER                 = "register"
+    const val STUDENT_HOME             = "student_home"
+    const val STUDENT_CONDITION        = "student_condition"
+    const val STUDENT_PROPOSAL_LIST    = "student_proposal_list"
+    const val STUDENT_PROPOSAL_DETAIL  = "student_proposal_detail/{proposalId}"
+    const val STUDENT_ACADEMY_PROFILE  = "student_academy_profile/{academyId}"
+    const val STUDENT_CHAT_LIST        = "student_chat_list"
+    const val STUDENT_CHAT_ROOM        = "student_chat_room/{chatRoomId}"
+    const val STUDENT_MY_PAGE          = "student_my_page"
+    const val ACADEMY_HOME             = "academy_home"
 }
 
 @Composable
@@ -91,10 +105,80 @@ fun NavGraph(
             )
         }
 
+        // ── 학생 화면 ──────────────────────────────────────
         composable(Routes.STUDENT_HOME) {
             StudentHomeScreen(
-                userName       = "홍길동",  // 추후 TokenDataStore에서 읽어오기
-                conditionCount = 2
+                userName         = "홍길동",
+                conditionCount   = 2,
+                onConditionClick = { navController.navigate(Routes.STUDENT_CONDITION) },
+                onProposalClick  = { id ->
+                    navController.navigate("student_proposal_detail/$id")
+                },
+                onNavHome        = {},
+                onNavProposals   = { navController.navigate(Routes.STUDENT_PROPOSAL_LIST) },
+                onNavChat        = { navController.navigate(Routes.STUDENT_CHAT_LIST) },
+                onNavMyPage      = { navController.navigate(Routes.STUDENT_MY_PAGE) }
+            )
+        }
+
+        composable(Routes.STUDENT_CONDITION) {
+            StudentConditionScreen(
+                onBack   = { navController.popBackStack() },
+                onSubmit = { navController.popBackStack() }
+            )
+        }
+
+        composable(Routes.STUDENT_PROPOSAL_LIST) {
+            StudentProposalListScreen(
+                onProposalClick = { id ->
+                    navController.navigate("student_proposal_detail/$id")
+                }
+            )
+        }
+
+        composable(Routes.STUDENT_PROPOSAL_DETAIL) { backStackEntry ->
+            val proposalId = backStackEntry.arguments?.getString("proposalId")?.toIntOrNull() ?: 1
+            StudentProposalDetailScreen(
+                proposalId = proposalId,
+                onBack     = { navController.popBackStack() },
+                onAccept   = { navController.navigate(Routes.STUDENT_CHAT_LIST) },
+                onReject   = { navController.popBackStack() }
+            )
+        }
+
+        composable(Routes.STUDENT_ACADEMY_PROFILE) { backStackEntry ->
+            val academyId = backStackEntry.arguments?.getString("academyId")?.toIntOrNull() ?: 1
+            StudentAcademyProfileScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Routes.STUDENT_CHAT_LIST) {
+            StudentChatListScreen(
+                onChatClick = { id ->
+                    navController.navigate("student_chat_room/$id")
+                }
+            )
+        }
+
+        composable(Routes.STUDENT_CHAT_ROOM) { backStackEntry ->
+            val chatRoomId = backStackEntry.arguments?.getString("chatRoomId")?.toIntOrNull() ?: 1
+            StudentChatRoomScreen(
+                chatRoomId  = chatRoomId,
+                academyName = "강남수학학원",
+                onBack      = { navController.popBackStack() }
+            )
+        }
+
+        composable(Routes.STUDENT_MY_PAGE) {
+            StudentMyPageScreen(
+                userName  = "홍길동",
+                userEmail = "hong@test.com",
+                onLogout  = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.STUDENT_HOME) { inclusive = true }
+                    }
+                }
             )
         }
     }
