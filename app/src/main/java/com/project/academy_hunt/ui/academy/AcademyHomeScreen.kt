@@ -58,6 +58,7 @@ fun AcademyHomeScreen(
     onNavHome      : () -> Unit = {},
     onNavStudents  : () -> Unit = {},
     onNavProposals : () -> Unit = {},
+    onNavChat      : () -> Unit = {},
     onNavMyPage    : () -> Unit = {}
 ) {
     var selectedNav by remember { mutableStateOf(0) }
@@ -71,6 +72,7 @@ fun AcademyHomeScreen(
                 onNavHome      = onNavHome,
                 onNavStudents  = onNavStudents,
                 onNavProposals = onNavProposals,
+                onNavChat      = onNavChat,
                 onNavMyPage    = onNavMyPage
             )
         }
@@ -370,13 +372,15 @@ private fun AcademyBottomNav(
     onNavHome     : () -> Unit,
     onNavStudents : () -> Unit,
     onNavProposals: () -> Unit,
+    onNavChat     : () -> Unit,
     onNavMyPage   : () -> Unit
 ) {
     val items = listOf(
         Triple("홈",       Icons.Default.Home,       onNavHome),
         Triple("학생목록", Icons.Default.Person,     onNavStudents),
         Triple("제안현황", Icons.Default.Assignment, onNavProposals),
-        Triple("마이페이지", Icons.Default.Forum,    onNavMyPage)
+        Triple("채팅",      Icons.Default.Forum,      onNavChat),
+        Triple("마이페이지", Icons.Default.Person,    onNavMyPage)
     )
 
     NavigationBar(

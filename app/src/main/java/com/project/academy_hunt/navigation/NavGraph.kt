@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import com.project.academy_hunt.data.auth.AuthRepository
 import com.project.academy_hunt.data.core.RetrofitClient
 import com.project.academy_hunt.data.core.TokenDataStore
+import com.project.academy_hunt.ui.academy.AcademyChatListScreen
+import com.project.academy_hunt.ui.academy.AcademyChatRoomScreen
 import com.project.academy_hunt.ui.academy.AcademyHomeScreen
 import com.project.academy_hunt.ui.academy.AcademyMyPageScreen
 import com.project.academy_hunt.ui.academy.AcademyProposalStatusScreen
@@ -52,6 +54,8 @@ object Routes {
     const val ACADEMY_PROPOSAL_WRITE  = "academy_proposal_write/{studentId}"
     const val ACADEMY_PROPOSAL_STATUS = "academy_proposal_status"
     const val ACADEMY_MY_PAGE         = "academy_my_page"
+    const val ACADEMY_CHAT_LIST = "academy_chat_list"
+    const val ACADEMY_CHAT_ROOM = "academy_chat_room/{chatRoomId}"
 }
 
 @Composable
@@ -206,6 +210,7 @@ fun NavGraph(
                 onNavHome      = {},
                 onNavStudents  = { navController.navigate(Routes.ACADEMY_STUDENT_LIST) },
                 onNavProposals = { navController.navigate(Routes.ACADEMY_PROPOSAL_STATUS) },
+                onNavChat      = { navController.navigate(Routes.ACADEMY_CHAT_LIST) },
                 onNavMyPage    = { navController.navigate(Routes.ACADEMY_MY_PAGE) }
             )
         }
@@ -247,6 +252,23 @@ fun NavGraph(
                         popUpTo(Routes.ACADEMY_HOME) { inclusive = true }
                     }
                 }
+            )
+        }
+
+        composable(Routes.ACADEMY_CHAT_LIST) {
+            AcademyChatListScreen(
+                onChatClick = { id ->
+                    navController.navigate("academy_chat_room/$id")
+                }
+            )
+        }
+
+        composable(Routes.ACADEMY_CHAT_ROOM) { backStackEntry ->
+            val chatRoomId = backStackEntry.arguments?.getString("chatRoomId")?.toIntOrNull() ?: 1
+            AcademyChatRoomScreen(
+                chatRoomId  = chatRoomId,
+                studentInfo = "홍길동 (고1·수학)",
+                onBack      = { navController.popBackStack() }
             )
         }
     }
