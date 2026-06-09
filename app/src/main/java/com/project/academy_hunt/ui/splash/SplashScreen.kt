@@ -12,15 +12,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.project.academy_hunt.data.core.TokenDataStore
+import com.project.academy_hunt.ui.theme.AcademyHuntTheme
 import com.project.academy_hunt.ui.theme.Blue600
 import com.project.academy_hunt.ui.theme.Gray500
 import com.project.academy_hunt.ui.theme.White
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 
 @Composable
-fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
+fun SplashScreen(
+    tokenDataStore        : TokenDataStore? = null,
+    onNavigateToOnboarding: () -> Unit = {},
+    onNavigateToStudent   : () -> Unit = {},
+    onNavigateToAcademy   : () -> Unit = {}
+) {
     val scale = remember { Animatable(0.5f) }
 
     LaunchedEffect(Unit) {
@@ -31,8 +40,19 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
                 stiffness    = Spring.StiffnessLow
             )
         )
-        delay(1500L)
-        onNavigateToOnboarding()
+        delay(1200L)
+
+        if (tokenDataStore != null) {
+            val token = tokenDataStore.token.first()
+            val role  = tokenDataStore.role.first()
+            when {
+                token.isNotEmpty() && role == "student" -> onNavigateToStudent()
+                token.isNotEmpty() && role == "academy" -> onNavigateToAcademy()
+                else                                    -> onNavigateToOnboarding()
+            }
+        } else {
+            onNavigateToOnboarding()
+        }
     }
 
     Box(
@@ -87,5 +107,13 @@ fun SplashScreen(onNavigateToOnboarding: () -> Unit) {
             color       = Blue600,
             strokeWidth = 2.dp
         )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun SplashScreenPreview() {
+    AcademyHuntTheme {
+        SplashScreen()
     }
 }

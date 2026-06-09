@@ -1,5 +1,6 @@
 package com.project.academy_hunt.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -31,6 +32,9 @@ import com.project.academy_hunt.viewmodel.LoginViewModel
 import com.project.academy_hunt.viewmodel.OnboardingViewModel
 import com.project.academy_hunt.viewmodel.RegisterViewModel
 import com.project.academy_hunt.viewmodel.ViewModelFactory
+import androidx.navigation.compose.NavHost
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 
 object Routes {
     const val SPLASH                  = "splash"
@@ -70,13 +74,26 @@ fun NavGraph(
 
     NavHost(
         navController    = navController,
-        startDestination = Routes.SPLASH
+        startDestination = Routes.SPLASH,
+        enterTransition  = { EnterTransition.None },
+        exitTransition   = { ExitTransition.None }
     ) {
         // ── 공통 ──────────────────────────────────────────
         composable(Routes.SPLASH) {
             SplashScreen(
+                tokenDataStore         = tokenDataStore,
                 onNavigateToOnboarding = {
                     navController.navigate(Routes.ONBOARDING) {
+                        popUpTo(Routes.SPLASH) { inclusive = true }
+                    }
+                },
+                onNavigateToStudent = {
+                    navController.navigate(Routes.STUDENT_HOME) {
+                        popUpTo(Routes.SPLASH) { inclusive = true }
+                    }
+                },
+                onNavigateToAcademy = {
+                    navController.navigate(Routes.ACADEMY_HOME) {
                         popUpTo(Routes.SPLASH) { inclusive = true }
                     }
                 }
@@ -96,6 +113,9 @@ fun NavGraph(
         }
 
         composable(Routes.LOGIN) {
+            // 뒤로가기 막기
+            BackHandler { /* 아무것도 안 함 */ }
+
             val vm: LoginViewModel = viewModel(factory = factory)
             LoginScreen(
                 viewModel            = vm,
